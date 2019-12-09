@@ -24,13 +24,10 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="HookEngine.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Hook.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="disasm.h">
+    <ClInclude Include="HookEngine.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,13 +35,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="HookEngine.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Hook.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="disasm.cpp">
+    <ClCompile Include="test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
