@@ -14,14 +14,8 @@ HookEngine::HookEngine()
 
 HookEngine::~HookEngine()
 {
+	this->removeAllHook();
 	
-	for (auto begin = hookMaps.begin(); begin != hookMaps.end(); begin++) 
-	{
-		auto hook = begin->second;
-		delete hook;
-	}
-
-	hookMaps.clear();
 }
 
 HookEngine * HookEngine::GetInstance()
@@ -59,7 +53,7 @@ Hook * HookEngine::FindHookByOldFuncAddr(ULONG oldFunc)
 	for (auto begin = hookMaps.begin(); begin != hookMaps.end(); begin++)
 	{
 		auto hook = begin->second;
-		if (hook->oldFuncAddress == oldFunc) 
+		if (hook->GetOldFunctionAddr() == oldFunc) 
 		{
 			return hook;
 		}
@@ -72,4 +66,28 @@ void HookEngine::DistoryInstance()
 {
 	if (hookEngine) delete hookEngine;
 	hookEngine = nullptr;
+}
+
+bool HookEngine::removeHook(ULONG newFunc)
+{
+	Hook * hook = hookMaps[newFunc];
+	hookMaps[newFunc] = nullptr;
+	if (hook != nullptr) 
+	{
+		delete hook;
+		
+	}
+
+	return true;
+}
+
+void HookEngine::removeAllHook()
+{
+	for (auto begin = hookMaps.begin(); begin != hookMaps.end(); begin++)
+	{
+		auto hook = begin->second;
+		delete hook;
+	}
+
+	hookMaps.clear();
 }

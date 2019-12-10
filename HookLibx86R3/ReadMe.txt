@@ -2,26 +2,54 @@
     静态库：HookLibx86R3 项目概述
 ========================================================================
 
-应用程序向导已为您创建了此 HookLibx86R3 库项目。
+环境WinAll,x86平台
 
-本文件概要介绍组成 HookLibx86R3 应用程序的每个文件的内容。
+小巧而强大的HOOK库，欢迎用的舒服
 
+使用示例 在 test工程 test.cpp中 参考
 
-HookLibx86R3.vcxproj
-    这是使用应用程序向导生成的 VC++ 项目的主项目文件，其中包含生成该文件的 Visual C++ 的版本信息，以及有关使用应用程序向导选择的平台、配置和项目功能的信息。
-
-HookLibx86R3.vcxproj.filters
-    这是使用“应用程序向导”生成的 VC++ 项目筛选器文件。它包含有关项目文件与筛选器之间的关联信息。在 IDE 中，通过这种关联，在特定节点下以分组形式显示具有相似扩展名的文件。例如，“.cpp”文件与“源文件”筛选器关联。
+作者:火哥 QQ群：1026716399 
 
 
-/////////////////////////////////////////////////////////////////////////////
+#include "stdafx.h"
+#include "Hook.h"
+#include "HookEngine.h"
 
-StdAfx.h, StdAfx.cpp
-    这些文件用于生成名为 HookLibx86R3.pch 的预编译头 (PCH) 文件和名为 StdAfx.obj 的预编译类型文件。
+typedef HMODULE (WINAPI *LoadLibraryProc)(_In_ LPCSTR lpLibFileName);
 
-/////////////////////////////////////////////////////////////////////////////
-其他注释:
+HMODULE WINAPI MyLoadLibraryA(_In_ LPCSTR lpLibFileName)
+{
+	printf("MyLoadLibraryA %s\r\n", lpLibFileName);
+	Hook * hook =HookEngine::GetInstance()->FindHookByNewFuncAddr((ULONG)MyLoadLibraryA);
+	LoadLibraryProc func = (LoadLibraryProc)hook->GetCalloldFuncAddress();
+	HMODULE hm = func(lpLibFileName);
+	return hm;
+}
 
-应用程序向导使用“TODO:”注释来指示应添加或自定义的源代码部分。
 
-/////////////////////////////////////////////////////////////////////////////
+
+ULONG __stdcall CallBack(PRegisterContext registerContext)
+{
+	
+	printf("------------------------------------\r\n");
+	return 0;
+}
+
+int main()
+{
+	//Hook 头部 示例
+	HMODULE hm = LoadLibraryA("ntdll.dll");
+	auto hookengine = HookEngine::GetInstance();
+	hookengine->AddHook((ULONG)LoadLibraryA, (ULONG)MyLoadLibraryA);
+	hm = LoadLibraryA("kernel32.dll");
+	
+
+	//Hook 修改寄存器示例代码
+	PVOID p = GetProcAddress(hm, "LoadLibraryW");
+	hookengine->AddHook((ULONG)GetProcAddress, (ULONG)CallBack, HookType::JmpHookGetRegister);
+	p = GetProcAddress(hm, "LoadLibraryW");
+
+	HookEngine::DistoryInstance();
+    return 0;
+}
+
